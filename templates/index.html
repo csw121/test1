@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>To-Do App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f8fafc 100%);
+      }
+      .todo-item {
+        transition: all 0.2s ease;
+      }
+      .todo-item:hover {
+        transform: translateY(-1px);
+      }
+    </style>
+  </head>
+  <body class="min-h-screen flex items-center justify-center p-4 text-slate-800">
+    <div class="w-full max-w-md">
+      <div class="rounded-3xl bg-white/80 shadow-xl ring-1 ring-slate-200 backdrop-blur-sm">
+        <div class="border-b border-slate-200 px-5 py-5">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-xs font-medium uppercase tracking-[0.2em] text-sky-500">Daily</p>
+              <h1 class="mt-1 text-2xl font-bold text-slate-900">할 일 목록</h1>
+            </div>
+            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-100 text-2xl shadow-inner">
+              ✅
+            </div>
+          </div>
+        </div>
+
+        <div class="p-4 sm:p-5">
+          <form action="/add" method="post" class="flex gap-2">
+            <input
+              type="text"
+              name="text"
+              placeholder="새 할 일을 입력하세요"
+              class="flex-1 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-base text-slate-800 placeholder:text-slate-400 focus:border-sky-400 focus:outline-none focus:ring-4 focus:ring-sky-100"
+              maxlength="80"
+              required
+            />
+            <button
+              type="submit"
+              class="rounded-2xl bg-sky-500 px-4 py-3 text-sm font-semibold text-white shadow-md shadow-sky-200 transition hover:bg-sky-600 focus:outline-none focus:ring-4 focus:ring-sky-100"
+            >
+              추가
+            </button>
+          </form>
+
+          <div class="mt-5 space-y-3">
+            {% if todos %}
+              {% for todo in todos %}
+                <div class="todo-item flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-3 py-3">
+                  <div class="flex min-w-0 items-center gap-3">
+                    <form action="{{ url_for('toggle_todo', todo_id=todo.id) }}" method="post">
+                      <button
+                        type="submit"
+                        aria-label="완료 상태 변경"
+                        class="flex h-6 w-6 items-center justify-center rounded-full border text-xs font-bold transition
+                          {% if todo.done %}
+                            border-emerald-500 bg-emerald-500 text-white
+                          {% else %}
+                            border-slate-300 bg-white text-transparent
+                          {% endif %}"
+                      >
+                        ✓
+                      </button>
+                    </form>
+
+                    <span class="truncate text-base font-medium {% if todo.done %} text-slate-400 line-through {% else %} text-slate-700 {% endif %}">
+                      {{ todo.text }}
+                    </span>
+                  </div>
+
+                  <form action="{{ url_for('delete_todo', todo_id=todo.id) }}" method="post">
+                    <button
+                      type="submit"
+                      class="rounded-xl border border-rose-200 bg-rose-50 px-2.5 py-1.5 text-xs font-semibold text-rose-500 transition hover:bg-rose-100"
+                    >
+                      삭제
+                    </button>
+                  </form>
+                </div>
+              {% endfor %}
+            {% else %}
+              <div class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-6 text-center text-sm text-slate-500">
+                아직 등록된 할 일이 없어요.
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
